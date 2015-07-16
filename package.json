@@ -1,0 +1,22 @@
+{
+  "name": "checkin",
+  "version": "1.0.0",
+  "description": "Check in when you're ready. When everyone's ready, go!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eric780/checkin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eric780/checkin/issues"
+  },
+  "homepage": "https://github.com/eric780/checkin#readme",
+  "dependencies": {
+    "express": "^4.13.1"
+  }
+}
