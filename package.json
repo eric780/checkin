@@ -1,22 +1,18 @@
 {
-  "name": "checkin",
-  "version": "1.0.0",
-  "description": "Check in when you're ready. When everyone's ready, go!",
-  "main": "index.js",
+  "name": "CheckIn",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/eric780/checkin.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/eric780/checkin/issues"
-  },
-  "homepage": "https://github.com/eric780/checkin#readme",
   "dependencies": {
-    "express": "^4.13.1"
+    "body-parser": "~1.13.2",
+    "cookie-parser": "~1.3.5",
+    "debug": "~2.2.0",
+    "express": "~4.13.1",
+    "jade": "~1.11.0",
+    "morgan": "~1.6.1",
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.3.6"
   }
 }

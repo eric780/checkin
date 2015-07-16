@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  p Full Name:
+  input#fullname(type="text")
+  
+  br
+
+  p Username:
+  input#username(type="text")
+  
+  br
+  br
+
+  button#checkinbutton(type="button") Check In!
+
+
+block scripts
+  script.
+    var socket = io.connect('http://localhost:8080');
+
+    var fullname = $('#fullname').val();
+    var username = $('#username').val();
+    var button = $('#checkinbutton');
+    button.on('click', function(event){
+      event.preventDefault();
+      console.log('button clicked');
+    });
