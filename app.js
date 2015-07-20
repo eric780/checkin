@@ -29,11 +29,56 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
-
+/* socket.io stuff */
+var clients = []; // maintain list of connected clients
+var loggedinusers = {}; // maintain who is logged in
+var checkedinusers = {}; // maintain who is checked in
 
 io.on('connection', function(socket){
-  console.log('a user has connected');
+  console.log('a user has connected', socket.id);
+  // record connection
+  clients.push(socket);
+  loggedinusers[socket.id] = false; // not logged in yet
+  checkedinusers[socket.id] = false; // not checked in yet
+
+  // record disconnection
+  socket.on('disconnect', function(){
+    console.log('a user has disconnected');
+    clients.splice(clients.indexOf(socket), 1);
+  });
+
+  // user attempted to log in
+  socket.on('login', function(user){
+    if(!loggedinusers[socket.id]){
+      io.emit('userloggedin', user);
+      loggedinusers[socket.id] = true;
+      console.log(user + ' has logged in');
+    }
+    else{
+      console.log(user + ' has tried to log in but is already logged in');
+    }
+  });
+
+  // user checked in
+  socket.on('checkin', function(user){
+    if(!checkedinusers[socket.id]){
+      checkedinusers[socket.id] = true;
+      console.log(user + ' has checked in');
+      io.emit('usercheckedin', user);
+    }
+    
+  });
+
+  // user checked out
+  socket.on('checkout', function(user){
+    checkedinusers[socket.id] = false;
+    console.log(user + ' has checked out');
+    io.emit('usercheckedout', user);
+  });
 });
+
+/*END Socket.io stuff */
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -15,17 +15,89 @@ block content
   br
   br
 
-  button#checkinbutton(type="button") Check In!
+  button#loginbutton(type="button") Login
+  button#checkinbutton(type="button", value="CHECKIN") Check in!
+
+
+  div#users
+    ul#userslist
+
 
 
 block scripts
   script.
-    var socket = io.connect('http://localhost:8080');
+    $(document).ready(function(){
+      var socket = io.connect('http://localhost:8080');
+      
+      $('#checkinbutton').css('display', 'none');
 
-    var fullname = $('#fullname').val();
-    var username = $('#username').val();
-    var button = $('#checkinbutton');
-    button.on('click', function(event){
-      event.preventDefault();
-      console.log('button clicked');
+      var loginbutton = $('#loginbutton');
+      loginbutton.on('click', function(event){
+        var fullname = $('#fullname').val();
+        var username = $('#username').val();
+      
+        if(fullname == '' || username == '') alert('Please fill out all fields.');
+        else{
+          localStorage['checkin.fullname'] = fullname;
+          localStorage['checkin.username'] = username;
+
+          console.log('logging in');
+
+          loginbutton.value = 'Check out!';
+
+          socket.emit('login', username);
+
+          $('#checkinbutton').css('display', 'block');
+        }
+        
+
+
+      });
+
+      var checkinbutton = $('#checkinbutton');
+      checkinbutton.on('click', function(event){
+        event.preventDefault();
+
+        if(checkinbutton.value = 'CHECKIN'){
+          var fullname = $('#fullname').val();
+          var username = $('#username').val();
+
+          if(fullname == '' || username == ''){
+            alert('Please fill out all fields.');
+          }
+          else{
+            socket.emit('checkin', username);
+            $('#checkinbutton').val('CHECKOUT');
+            $('#checkinbutton').html('Check out!');
+          }
+        }
+        else{ // CHECKOUT
+          var username = localStorage['checkin.username'];
+          socket.emit('checkout', username);
+
+          $('#checkinbutton').val('CHECKIN');
+          $('#checkinbutton').html('Check in!');
+        }
+       
+
+      });
+
+      socket.on('usercheckedin', function(user){
+        $('#' + user).append('<img src="/images/check-mark-md.png" width="25px" height="25px">');
+      });
+
+      socket.on('usercheckedout', function(user){
+        $('#' + user + ' img').remove();
+      });
+
+      socket.on('userloggedin', function(user){
+        var entry = document.createElement('li');
+        entry.innerHTML = user;
+        entry.setAttribute('id', user);
+        $('#userslist').append(entry);
+      });
+
+
     });
+    
+
