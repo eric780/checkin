@@ -31,6 +31,25 @@ block scripts
       
       $('#checkinbutton').css('display', 'none');
 
+      // reload saved data from localstorage
+      $('#fullname').val(localStorage['checkin.fullname']);
+      $('#username').val(localStorage['checkin.username']);
+
+      // load all current users
+      socket.on('users-status', function(userstatus){
+        console.log(userstatus);
+        for(var i=0; i < userstatus.length; i++){
+          var userinfo = userstatus[i];
+          var entry = document.createElement('li');
+          entry.innerHTML = userinfo.username;
+          entry.setAttribute('id', userinfo.userid);
+          if(userinfo.checkedin)
+            $(entry).append('<img src="/images/check-mark-md.png" width="25px" height="25px">');
+          $('#userslist').append(entry);
+        }
+      });
+
+      // login
       var loginbutton = $('#loginbutton');
       loginbutton.on('click', function(event){
         var fullname = $('#fullname').val();
@@ -49,16 +68,13 @@ block scripts
 
           $('#checkinbutton').css('display', 'block');
         }
-        
-
-
       });
 
-      var checkinbutton = $('#checkinbutton');
-      checkinbutton.on('click', function(event){
+      // check in
+      $('#checkinbutton').on('click', function(event){
         event.preventDefault();
 
-        if(checkinbutton.value = 'CHECKIN'){
+        if($('#checkinbutton').attr('value') == 'CHECKIN'){
           var fullname = $('#fullname').val();
           var username = $('#username').val();
 
@@ -78,23 +94,42 @@ block scripts
           $('#checkinbutton').val('CHECKIN');
           $('#checkinbutton').html('Check in!');
         }
-       
-
       });
 
-      socket.on('usercheckedin', function(user){
-        $('#' + user).append('<img src="/images/check-mark-md.png" width="25px" height="25px">');
+      // other user checked in
+      socket.on('usercheckedin', function(userid){
+        $('#' + userid).append('<img src="/images/check-mark-md.png" width="25px" height="25px">');
       });
 
-      socket.on('usercheckedout', function(user){
-        $('#' + user + ' img').remove();
+      // other user checked out
+      socket.on('usercheckedout', function(userid){
+        $('#' + userid + ' img').remove();
       });
 
-      socket.on('userloggedin', function(user){
+      // other user logged in
+      socket.on('userloggedin', function(userinfo){
         var entry = document.createElement('li');
-        entry.innerHTML = user;
-        entry.setAttribute('id', user);
+        entry.innerHTML = userinfo.username;
+        entry.setAttribute('id', userinfo.userid);
         $('#userslist').append(entry);
+      });
+
+      //user disconnected
+      socket.on('user-disconnected', function(userid){
+        $('#' + userid).remove();
+      });
+
+      //user relogged with new name
+      socket.on('userchangedname', function(userinfo){
+        console.log('a user has changed their name');
+        var img = $('#' + userinfo.userid).find('img');
+        $('#' + userinfo.userid).first().html(userinfo.newname);
+        $('#' + userinfo.userid).append(img);
+      });
+
+      //everyone ready!!!!!
+      socket.on('all-ready', function(){
+        alert("LET'S GOOOOOOOOOO");
       });
 
 
