@@ -30,6 +30,7 @@ server.on('error', onError);
 server.on('listening', onListening);
 console.log('listening on port ', port);
 
+/* Socket.io stuff */
 var io = require('socket.io').listen(server);
 require('../sockets/base')(io);
 

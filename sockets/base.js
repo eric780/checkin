@@ -33,6 +33,12 @@ module.exports = function (io) {
 	  // user attempted to log in
 	  socket.on('login', function(user){
 	    console.log('users ', usernames);
+
+	    if(!usernameIsGood(user)){
+	    	socket.emit('invalid username');
+	    	return;
+	    }
+
 	    // if user not logged in yet
 	    if(!loggedinusers[socket.id]){
 	      io.emit('userloggedin', {username: user, userid: socket.id});
@@ -110,6 +116,13 @@ module.exports = function (io) {
 	      
 	  });
 	  return b;
+	}
+
+	usernameIsGood = function(username)
+	{
+		//var regex = /(<([^>]+)>)/ig;
+		//return regex.test(username);
+		return username.indexOf('<script>') > -1;
 	}
 
 /*END Socket.io stuff */
