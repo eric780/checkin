@@ -122,7 +122,7 @@ module.exports = function (io) {
 	{
 		//var regex = /(<([^>]+)>)/ig;
 		//return regex.test(username);
-		return username.indexOf('<script>') > -1;
+		return username.indexOf('<script>') == -1;
 	}
 
 /*END Socket.io stuff */
