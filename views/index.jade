@@ -110,7 +110,7 @@ block scripts
       // other user logged in
       socket.on('userloggedin', function(userinfo){
         var entry = document.createElement('li');
-        entry.innerHTML = userinfo.username;
+        $(entry).html(userinfo.username);
         entry.setAttribute('id', userinfo.userid);
         $('#userslist').append(entry);
       });
